@@ -1,5 +1,5 @@
-
 import os
+import requests
 from flask import Flask,render_template,request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
@@ -7,19 +7,32 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 
+
 load_dotenv()
 
 app = Flask(__name__)
 
+API_URL = os.getenv('API_URL')
 basedir = os.path.abspath(os.path.dirname(__file__))
 database_path = os.path.join(basedir, 'data', 'library.sqlite')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
-
 db.init_app(app)
+
+def fetch_cover_picture(isbn):
+    try:
+        url = f'{API_URL}{isbn}-L.jpg'  # Assuming the API_URL gives direct access to images.
+        response = requests.get(url)
+        if response.status_code == 200:
+            return url  # Return the image URL directly if the request is successful
+        else:
+            return 'default_image.jpg'  # Return a default image if not found
+    except Exception as e:
+        print(f"Error fetching cover image: {e}")
+        return 'default_image.jpg'
+
 
 with app.app_context():
   db.create_all()
@@ -27,6 +40,10 @@ with app.app_context():
 @app.route('/')
 def home():
     books = Book.query.all() #query all book with their assosiated authors
+
+    for book in books:
+        cover_image = fetch_cover_picture(book.isbn)
+        book.cover_image = cover_image
     return render_template('home.html', books=books)
 
 @app.route('/add_author', methods=['GET', 'POST'])
@@ -52,7 +69,7 @@ def add_author():
             return redirect(url_for('add_author'))
         except Exception as e:
             db.session.rollback()
-            flash (f"An error occured:{str(e)}.', 'error' ")
+            flash (f"An error occured:{str(e)}", 'error' )
             return redirect(url_for('add_author'))
     # If GET request, just render the form
     return render_template('add_author.html')
@@ -79,7 +96,7 @@ def add_book():
 
         except Exception as e:
             #db.session.rollback()
-            flash (f"An error occured:{str(e)}.', 'error' ")
+            flash (f"An error occured:{str(e)} ", 'error' )
             return redirect(url_for('add_book'))
 
     # GET request - fetch authors for the dropdown
