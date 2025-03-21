@@ -3,11 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+        <style>
+        .book {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .book img {
+            width: 100px;
+            height: 150px;
+            margin-right: 20px;
+        }
+    </style>
 </head>
 <body>
-    {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
+    <h1> Welcome to the Book List</h1>
+    <div>
+        {% for book in books %}
+        <div class="book">
+            <!-- Book Cover Image -->
+            <img src="{{ book.cover_image }}" alt="{{ book.title }} Cover">
+
+            <!-- Book Title and Author -->
+            <div>
+                <h2>{{ book.title }}</h2>
+                <p>By {{ book.author.name }}</p>
+            </div>
+        </div>
+
+        {% endfor %}
     </div>
-    {% endfor %}
+
+
 </body>
 </html>
