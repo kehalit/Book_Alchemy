@@ -1,0 +1,12 @@
+
+## Optional Python ignores
+__pycache__/
+*.pyc
+instance/
+
+# Ignore environment files
+.env
+
+# Ignore the SQLite database
+*.sqlite3
+data/library.sqlite
