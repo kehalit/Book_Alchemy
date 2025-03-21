@@ -26,7 +26,8 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    return "Hello from the Book Library!"
+    books = Book.query.all() #query all book with their assosiated authors
+    return render_template('home.html', books=books)
 
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
