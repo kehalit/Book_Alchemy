@@ -2,38 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-        <style>
-        .book {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .book img {
-            width: 100px;
-            height: 150px;
-            margin-right: 20px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+    <!-- Link to the external style.css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1> Welcome to the Book List</h1>
-    <div>
-        {% for book in books %}
-        <div class="book">
-            <!-- Book Cover Image -->
-            <img src="{{ book.cover_image }}" alt="{{ book.title }} Cover">
+    <h1>Welcome to the Book List</h1>
 
-            <!-- Book Title and Author -->
-            <div>
-                <h2>{{ book.title }}</h2>
-                <p>By {{ book.author.name }}</p>
-            </div>
+   <div class="book-container">
+    {% for book in books %}
+    <div class="book">
+        <!-- Display the book's cover image -->
+        <img src="{{ book.cover_image }}" alt="Cover of {{ book.title }}" width="120">
+
+        <!-- Display the book's title and author -->
+        <div class="book-info">
+            <h2>{{ book.title }}</h2>
+            <p>Author: {{ book.author.name }}</p>
         </div>
-
-        {% endfor %}
     </div>
+    {% endfor %}
+</div>
 
 
+    <footer>
+        <p>&copy; 2025 Your Bookstore. All rights reserved.</p>
+    </footer>
 </body>
 </html>
