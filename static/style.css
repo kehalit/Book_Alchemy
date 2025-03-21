@@ -1,0 +1,72 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* Book Container Styles */
+.book-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.book {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 800px;
+}
+
+.book img {
+    width: 120px;
+    height: 180px;
+    margin-right: 20px;
+    border-radius: 8px;
+}
+
+.book-info {
+    flex: 1;
+}
+
+.book-info h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.book-info p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.book-info .author {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.book-info .cover {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* Footer Styles */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #555;
+}
