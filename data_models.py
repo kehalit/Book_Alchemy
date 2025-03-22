@@ -11,6 +11,7 @@ class Author(db.Model):
     name = db.Column(db.String(64), nullable=False)
     birth_date =db.Column(db.DateTime)
     date_of_death = db.Column(db.DateTime)
+
     books = db.relationship('Book', backref='author', lazy=True)
 
     def __repr__(self):
@@ -24,7 +25,8 @@ class Book(db.Model):
     isbn = db.Column(db.String)
     title =db.Column(db.String)
     publication_year = db.Column(db.Integer)
-    author_id =db.Column(db.Integer, db.ForeignKey('authors.author_id'))
+
+    author_id =db.Column(db.Integer, db.ForeignKey('authors.author_id'), nullable=False)
 
 
     def __repr__(self):
