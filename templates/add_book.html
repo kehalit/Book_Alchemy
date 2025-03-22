@@ -27,10 +27,10 @@
         <input type="text" id="publication_year" name="publication_year"><br><br>
 
         <label for="author_id">Select Author:</label>
-        <select name = "author_id"  >
+        <select name = "author_id"  required>
             <option value="">--Select Author--</option>
             {% for author in authors %}
-                <option value="{{ author.id }}">{{ author.name }}</option>
+                <option value="{{ author.author_id }}">{{ author.name }}</option>
             {% endfor %}
         </select><br><br>
 
