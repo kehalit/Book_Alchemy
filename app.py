@@ -39,12 +39,17 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    books = Book.query.all() #query all book with their assosiated authors
+    sort_by = request.args.get('sort_by', 'title')
+    if sort_by == 'author':
+        books = Book.query.join(Author).order_by(Author.authors.name).all()
+    else:
+        books = Book.query.order_by(Book.title).all() #query all book with their assosiated authors
 
     for book in books:
         cover_image = fetch_cover_picture(book.isbn)
         book.cover_image = cover_image
-    return render_template('home.html', books=books)
+
+    return render_template('home.html', books=books, sort_by=sort_by)
 
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
@@ -83,9 +88,12 @@ def add_book():
             publication_year = request.form['publication_year']
             author_id = request.form['author_id']
 
+            if not author_id:
+                flash('Author is required for a book.', 'error')
+                return redirect(url_for('add_book'))
+
             #create a new Book instance
             book = Book(isbn=isbn, title=title, publication_year=publication_year, author_id=author_id)
-
 
             # Add the new book to the database
             db.session.add(book)
