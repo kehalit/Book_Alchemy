@@ -1,13 +1,11 @@
 import os
 from crypt import methods
-
 import requests
 from flask import Flask,render_template,request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
 from datetime import datetime
 from dotenv import load_dotenv
-
 
 
 load_dotenv()
@@ -21,7 +19,9 @@ database_path = os.path.join(basedir, 'data', 'library.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
 db.init_app(app)
+
 
 def fetch_cover_picture(isbn):
     try:
@@ -35,15 +35,14 @@ def fetch_cover_picture(isbn):
         print(f"Error fetching cover image: {e}")
         return 'default_image.jpg'
 
-
 with app.app_context():
   db.create_all()
+
 
 @app.route('/', methods= ['GET'])
 def home():
     search_term = request.args.get('search', '')
     sort_by = request.args.get('sort_by', 'title')
-
     query = Book.query.join(Author)
 
     if search_term:
@@ -62,6 +61,7 @@ def home():
 
     return render_template('home.html', books=books, sort_by=sort_by, search_term=search_term)
 
+
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
     if request.method == 'POST':
@@ -69,7 +69,6 @@ def add_author():
         name = request.form['name']
         birth_date_str = request.form['birth_date']
         date_of_death_str = request.form['date_of_death']
-
 
         # Add the new author to the database
         try:
@@ -89,6 +88,7 @@ def add_author():
             return redirect(url_for('add_author'))
     # If GET request, just render the form
     return render_template('add_author.html')
+
 
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
@@ -122,6 +122,30 @@ def add_book():
     # GET request - fetch authors for the dropdown
     authors = Author.query.all()
     return render_template('add_book.html', authors=authors)
+
+
+@app.route('/book/<int:book_id>/delete', methods=['POST'])
+def delete_book(book_id):
+    # Find the book to delete
+    book = Book.query.get_or_404(book_id)
+
+    # Save the author of the book
+    author = book.author
+
+    # Delete the book from the database
+    db.session.delete(book)
+
+    # Check if the author has any other books
+    if not Author.query.filter_by(author_id=author.author_id).first():
+        # If the author has no other books, delete the author as well
+        db.session.delete(author)
+
+    db.session.commit()
+    # Flash a success message
+    flash(f'Book "{book.title}" has been successfully deleted!', 'success')
+    # Redirect to the homepage
+    return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
