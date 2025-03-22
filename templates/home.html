@@ -9,16 +9,12 @@
 </head>
 <body>
     <h1>Welcome to the Book List</h1>
-
         <!--search form-->
-        <div class ="search_options">
-            <form action=" url_for('home')" method="GET">
-                 <label for="search">Search for a Book</label>
-                <input type=text id="search" name="search" placeholder="Enter book title / author">
-                <button type="submit">Search</button><br><br>
-            </form>
-
-        </div>
+    <form action=" {{ url_for('home') }}" method="GET">
+        <label for="search">Search for a Book</label>
+        <input type=text id="search" name="search" placeholder="Enter book title / author">
+        <button type="submit">Search</button><br><br>
+    </form>
 
         <!-- Sorting dropdown -->
        <div class="sort-options">
@@ -29,6 +25,7 @@
         </select>
     </div>
 
+    {% if books %}
    <div class="book-container">
     {% for book in books %}
     <div class="book">
@@ -43,6 +40,9 @@
     </div>
     {% endfor %}
 </div>
+    {% else %}
+        <p>No books found that match your search criteria.</p>
+    {% endif %}
 <footer>
      <p>&copy; 2025 Your Bookstore. All rights reserved.</p>
 </footer>
