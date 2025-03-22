@@ -5,10 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book List</title>
     <!-- Link to the external style.css -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Welcome to the Book List</h1>
+
+        <!-- Sorting dropdown -->
+       <div class="sort-options">
+        <label for="sort-by">Sort by:</label>
+        <select id="sort-by" onchange="window.location.href = '/?sort_by=' + this.value;">
+            <option value="title" {% if sort_by =='title' %}selected{% endif %}>Title</option>
+            <option value="author" {% if sort_by =='author' %}selected{% endif %}>Author</option>
+        </select>
+    </div>
 
    <div class="book-container">
     {% for book in books %}
@@ -19,15 +28,13 @@
         <!-- Display the book's title and author -->
         <div class="book-info">
             <h2>{{ book.title }}</h2>
-            <p>Author: {{ book.author.name }}</p>
+            <p>Author: {{ book.author.name if book.author else 'Unknown Author' }}</p>
         </div>
     </div>
     {% endfor %}
 </div>
-
-
-    <footer>
-        <p>&copy; 2025 Your Bookstore. All rights reserved.</p>
-    </footer>
+<footer>
+     <p>&copy; 2025 Your Bookstore. All rights reserved.</p>
+</footer>
 </body>
 </html>
