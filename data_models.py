@@ -22,11 +22,12 @@ class Author(db.Model):
 class Book(db.Model):
     __tablename__= 'books'
     book_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    isbn = db.Column(db.String)
-    title =db.Column(db.String)
+    isbn = db.Column(db.String, nullable = False)
+    title =db.Column(db.String, nullable=False)
     publication_year = db.Column(db.Integer)
 
     author_id =db.Column(db.Integer, db.ForeignKey('authors.author_id'), nullable=False)
+
 
 
     def __repr__(self):
