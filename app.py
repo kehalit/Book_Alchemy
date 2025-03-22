@@ -1,4 +1,6 @@
 import os
+from crypt import methods
+
 import requests
 from flask import Flask,render_template,request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -37,19 +39,28 @@ def fetch_cover_picture(isbn):
 with app.app_context():
   db.create_all()
 
-@app.route('/')
+@app.route('/', methods= ['GET'])
 def home():
+    search_term = request.args.get('search', '')
     sort_by = request.args.get('sort_by', 'title')
-    if sort_by == 'author':
-        books = Book.query.join(Author).order_by(Author.authors.name).all()
-    else:
-        books = Book.query.order_by(Book.title).all() #query all book with their assosiated authors
 
+    query = Book.query.join(Author)
+
+    if search_term:
+        query = query.filter(
+                Book.title.ilike(f'%{search_term}%') | Author.name.ilike(f'%{search_term}%')
+             )
+    if sort_by == 'author':
+        query = query.order_by(Author.name)
+    else:
+        query =query.order_by(Book.title)
+
+    books = query.all()
     for book in books:
         cover_image = fetch_cover_picture(book.isbn)
         book.cover_image = cover_image
 
-    return render_template('home.html', books=books, sort_by=sort_by)
+    return render_template('home.html', books=books, sort_by=sort_by, search_term=search_term)
 
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
@@ -91,6 +102,7 @@ def add_book():
             if not author_id:
                 flash('Author is required for a book.', 'error')
                 return redirect(url_for('add_book'))
+            author_id =int(author_id)
 
             #create a new Book instance
             book = Book(isbn=isbn, title=title, publication_year=publication_year, author_id=author_id)
