@@ -41,12 +41,13 @@ def fetch_cover_picture(isbn):
         str: URL of the cover image or a default image.
     """
     try:
+        timeout_duration = 10
         url = f'{API_URL}{isbn}-L.jpg'
-        response = requests.get(url)
+        response = requests.get(url, timeout = timeout_duration)
         if response.status_code == 200:
             return url
-        else:
-            return 'default_image.jpg'
+        return 'default_image.jpg'
+
     except Exception as e:
         print(f"Error fetching cover image: {e}")
         return 'default_image.jpg'
