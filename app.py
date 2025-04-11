@@ -4,7 +4,6 @@ from flask import (
     Flask, render_template, request,
     redirect, url_for, flash
 )
-from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
 from datetime import datetime
 from dotenv import load_dotenv
@@ -40,18 +39,27 @@ def fetch_cover_picture(isbn):
     Returns:
         str: URL of the cover image or a default image.
     """
+    filename = f"{isbn}.jpg"
+    local_path = os.path.join('static', 'covers', filename)
+
+    # If image already downloaded, use it
+    if os.path.exists(local_path):
+        return url_for('static', filename=f'covers/{filename}')
     try:
         timeout_duration = 10
         url = f'{API_URL}{isbn}-L.jpg'
         response = requests.get(url, timeout = timeout_duration)
         if response.status_code == 200:
-            return url
-        return 'default_image.jpg'
 
+            with open(local_path, 'wb') as f:
+                for chunk in response.iter_content(1024):
+                    f.write(chunk)
+            return url_for('static', filename=f'covers/{filename}')
+
+        return url_for('static', filename='covers/default_image.jpg')
     except Exception as e:
         print(f"Error fetching cover image: {e}")
-        return 'default_image.jpg'
-
+        return url_for('static', filename='covers/default_image.jpg')
 
 # Create database tables within app context
 with app.app_context():
