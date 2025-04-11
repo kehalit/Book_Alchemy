@@ -1,3 +1,5 @@
+from enum import unique
+
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import ForeignKey
@@ -54,7 +56,7 @@ class Book(db.Model):
     __tablename__ = 'books'
 
     book_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    isbn = db.Column(db.String, nullable = False)
+    isbn = db.Column(db.String, nullable = False, unique = True)
     title = db.Column(db.String, nullable=False)
     publication_year = db.Column(db.Integer)
     author_id = db.Column(db.Integer, db.ForeignKey('authors.author_id'), nullable=False)
