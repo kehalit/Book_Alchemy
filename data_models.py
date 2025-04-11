@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import backref
 
 db = SQLAlchemy()
-
+#db becomes an instance of this classs
 
 class Author(db.Model):
     """
@@ -13,7 +13,7 @@ class Author(db.Model):
         Attributes:
             author_id (int): The unique identifier for the author.
             name (str): The name of the author.
-            birth_date (datetime): The birth date of the author.
+            birth_date (datetime): The birthdate of the author.
             date_of_death (datetime): The death date of the author (if applicable).
             books (list): A list of books associated with the author.
 
@@ -27,7 +27,7 @@ class Author(db.Model):
     birth_date = db.Column(db.DateTime)
     date_of_death = db.Column(db.DateTime)
 
-    books = db.relationship('Book', backref='author', lazy=True)
+    books = db.relationship('Book', back_populates='author', lazy=True)
 
     def __repr__(self):
 
@@ -57,8 +57,9 @@ class Book(db.Model):
     isbn = db.Column(db.String, nullable = False)
     title = db.Column(db.String, nullable=False)
     publication_year = db.Column(db.Integer)
-
     author_id = db.Column(db.Integer, db.ForeignKey('authors.author_id'), nullable=False)
+
+    author = db.relationship('Author', back_populates='books')
 
     def __repr__(self):
         """
